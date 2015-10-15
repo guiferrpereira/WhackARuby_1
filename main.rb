@@ -22,6 +22,7 @@ class WhackARuby < Gosu::Window
 		@score = 0
 
 		@playing = true
+		@start_time = 0
 	end
 
 	def draw
@@ -48,6 +49,7 @@ class WhackARuby < Gosu::Window
 		unless @playing
 			@font.draw('Game Over', 300, 300, 3)
 			@visible = 20
+			@font.draw('Press the Space Bar to Play Again', 175, 350, 3)
 		end
 	end
 
@@ -60,10 +62,10 @@ class WhackARuby < Gosu::Window
 	 		@velocity_y *= -1 if @y + @height/2 > 600 || @y - @height/2 < 0
 
 			@visible -= 1
-	 		@visible = 30 if @visible < -10 && rand < 0.01
+			@time_left = (10 - ((Gosu.milliseconds - @start_time) / 1000))
 
-	 		@time_left = (10 - (Gosu.milliseconds / 1000))
-	 		@playing = false if @time_left < 0
+			@playing = false if @time_left < 0
+	 		@visible = 30 if @visible < -5 && rand < 0.01
 	 	end
 	end
 
@@ -78,6 +80,13 @@ class WhackARuby < Gosu::Window
 					@hit = -1
 					@score -= 1
 				end
+			end
+		else
+			if (id == Gosu::KbSpace)
+				@playing = true
+				@visible = -10
+				@start_time = Gosu.milliseconds
+				@score = 0
 			end
 		end
 	end
